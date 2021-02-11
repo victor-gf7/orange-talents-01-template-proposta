@@ -37,6 +37,9 @@ public class Proposta {
     @Column(nullable = false)
     private BigDecimal salario;
 
+    @Enumerated(EnumType.STRING)
+    private StatusSolicitacaoCliente status;
+
     @Deprecated
     public Proposta() {
     }
@@ -59,6 +62,10 @@ public class Proposta {
         return documento;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
     @Override
     public String toString() {
         return "Proposta{" +
@@ -69,5 +76,10 @@ public class Proposta {
                 ", endereco=" + endereco +
                 ", salario=" + salario +
                 '}';
+    }
+
+    public void atualizaStatus(String solicitacao) {
+
+        this.status = StatusSolicitacaoCliente.resultadoPara(solicitacao);
     }
 }
