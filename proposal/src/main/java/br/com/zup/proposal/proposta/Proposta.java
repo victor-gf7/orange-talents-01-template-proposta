@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,6 +76,18 @@ public class Proposta {
         return cartao;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public BigDecimal getSalario() {
+        return salario;
+    }
+
     public StatusSolicitacaoCliente getStatus() {
         return status;
     }
@@ -100,6 +111,7 @@ public class Proposta {
         this.status = StatusSolicitacaoCliente.resultadoPara(solicitacao);
     }
 
+    //necessário refatorar
     public void associaCartao(CartaoClient.NovoCartaoResponse response) {
 
         Set<Bloqueio> bloqueios = response.getBloqueios().stream().map(Bloqueio::new).collect(Collectors.toSet());
