@@ -1,10 +1,9 @@
-package br.com.zup.proposal.controller;
+package br.com.zup.proposal.proposta;
 
 
-import br.com.zup.proposal.dto.request.NovaPropostaRequest;
-import br.com.zup.proposal.model.Proposta;
-import br.com.zup.proposal.repository.PropostaRepository;
-import br.com.zup.proposal.util.builder.cliente.ConsultaCliente;
+import br.com.zup.proposal.cartao.CartaoClient;
+import br.com.zup.proposal.proposta.repository.PropostaRepository;
+import br.com.zup.proposal.proposta.request.NovaPropostaRequest;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -23,10 +21,13 @@ import java.net.URI;
 public class PropostaController {
 
     @Autowired
-    private ConsultaCliente consultaCliente;
+    private AnaliseClient analiseClient;
 
     @Autowired
     private PropostaRepository propostaRepository;
+
+    @Autowired
+    private CartaoClient cartaoClient;
 
     @PostMapping("/propostas")
     public ResponseEntity<?> criaProposta(@RequestBody @Valid NovaPropostaRequest request, UriComponentsBuilder builder){
@@ -40,15 +41,14 @@ public class PropostaController {
         propostaRepository.save(proposta);
 
         try{
-            ConsultaCliente.AnaliseStatusRequest analiseStatusRequest = new ConsultaCliente.AnaliseStatusRequest(proposta);
-            ConsultaCliente.ConsultaStatusResponse response = consultaCliente.analise(analiseStatusRequest);
+            AnaliseClient.AnaliseStatusRequest analiseStatusRequest = new AnaliseClient.AnaliseStatusRequest(proposta);
+            AnaliseClient.ConsultaStatusResponse response = analiseClient.analise(analiseStatusRequest);
 
             proposta.atualizaStatus(response.getResultadoSolicitacao());
 
         } catch (FeignException.UnprocessableEntity ex){
             proposta.atualizaStatus("COM_RESTRICAO");
         }
-
         propostaRepository.save(proposta);
 
         URI url = builder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();

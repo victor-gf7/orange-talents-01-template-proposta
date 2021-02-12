@@ -1,7 +1,7 @@
 package br.com.zup.proposal.util.builder;
 
-import br.com.zup.proposal.dto.request.NovaPropostaRequest;
-import br.com.zup.proposal.dto.request.NovoEndereçoRequest;
+import br.com.zup.proposal.proposta.request.NovaPropostaRequest;
+import br.com.zup.proposal.proposta.request.NovoEndereçoRequest;
 
 import java.math.BigDecimal;
 

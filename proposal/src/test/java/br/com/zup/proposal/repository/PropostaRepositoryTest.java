@@ -1,7 +1,8 @@
 package br.com.zup.proposal.repository;
 
-import br.com.zup.proposal.dto.request.NovaPropostaRequest;
-import br.com.zup.proposal.model.Proposta;
+import br.com.zup.proposal.proposta.request.NovaPropostaRequest;
+import br.com.zup.proposal.proposta.Proposta;
+import br.com.zup.proposal.proposta.repository.PropostaRepository;
 import br.com.zup.proposal.util.builder.EnderecoBuilder;
 import br.com.zup.proposal.util.builder.PropostaBuilder;
 import org.junit.jupiter.api.Test;

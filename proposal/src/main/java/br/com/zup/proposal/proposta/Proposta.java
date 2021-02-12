@@ -1,5 +1,6 @@
-package br.com.zup.proposal.model;
+package br.com.zup.proposal.proposta;
 
+import br.com.zup.proposal.cartao.*;
 import br.com.zup.proposal.config.validation.CPFOuCNPJ;
 
 
@@ -10,6 +11,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Proposta {
@@ -40,6 +44,9 @@ public class Proposta {
     @Enumerated(EnumType.STRING)
     private StatusSolicitacaoCliente status;
 
+    @OneToOne(mappedBy = "proposta", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Cartao cartao;
+
     @Deprecated
     public Proposta() {
     }
@@ -66,6 +73,14 @@ public class Proposta {
         return nome;
     }
 
+    public Cartao getCartao() {
+        return cartao;
+    }
+
+    public StatusSolicitacaoCliente getStatus() {
+        return status;
+    }
+
     @Override
     public String toString() {
         return "Proposta{" +
@@ -75,11 +90,34 @@ public class Proposta {
                 ", nome='" + nome + '\'' +
                 ", endereco=" + endereco +
                 ", salario=" + salario +
+                ", status=" + status +
+                ", cartao=" + cartao +
                 '}';
     }
 
     public void atualizaStatus(String solicitacao) {
 
         this.status = StatusSolicitacaoCliente.resultadoPara(solicitacao);
+    }
+
+    public void associaCartao(CartaoClient.NovoCartaoResponse response) {
+
+        Set<Bloqueio> bloqueios = response.getBloqueios().stream().map(Bloqueio::new).collect(Collectors.toSet());
+        Set<Aviso> avisos = response.getAvisos().stream().map(Aviso::new).collect(Collectors.toSet());
+        Set<Carteira> carteiras = response.getCarteiras().stream().map(Carteira::new).collect(Collectors.toSet());
+        Set<Parcela> parcelas = response.getParcelas().stream().map(Parcela::new).collect(Collectors.toSet());
+        Renegociacao renegociacao = null;
+        Vencimento vencimento = null;
+        if(response.getRenegociacao() != null){
+             renegociacao = new Renegociacao(response.getRenegociacao());
+        }
+        if(response.getVencimento() != null){
+            vencimento = new Vencimento(response.getVencimento());
+        }
+
+
+        this.cartao = new Cartao(response.getId(), response.getTitular(), response.getEmitidoEm(),
+                response.getLimite(), bloqueios, avisos, carteiras,
+                parcelas, renegociacao, vencimento, this);
     }
 }

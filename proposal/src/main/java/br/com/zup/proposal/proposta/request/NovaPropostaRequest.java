@@ -1,8 +1,7 @@
-package br.com.zup.proposal.dto.request;
+package br.com.zup.proposal.proposta.request;
 
 import br.com.zup.proposal.config.validation.CPFOuCNPJ;
-import br.com.zup.proposal.model.Endereco;
-import br.com.zup.proposal.model.Proposta;
+import br.com.zup.proposal.proposta.Proposta;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.Valid;

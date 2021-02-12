@@ -1,4 +1,4 @@
-package br.com.zup.proposal.model;
+package br.com.zup.proposal.proposta;
 
 public enum StatusSolicitacaoCliente {
 

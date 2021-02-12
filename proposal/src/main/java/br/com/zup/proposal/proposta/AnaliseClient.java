@@ -1,12 +1,11 @@
-package br.com.zup.proposal.util.builder.cliente;
+package br.com.zup.proposal.proposta;
 
-import br.com.zup.proposal.model.Proposta;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "consultaCliente", url = "http://localhost:9999/api/solicitacao")
-public interface ConsultaCliente {
+public interface AnaliseClient {
 
     @PostMapping
     ConsultaStatusResponse analise(@RequestBody AnaliseStatusRequest analiseStatusRequest);
