@@ -1,5 +1,7 @@
 package br.com.zup.proposal.cartao;
 
+import br.com.zup.proposal.biometria.Biometria;
+import br.com.zup.proposal.biometria.NovaBiometriaRequest;
 import br.com.zup.proposal.proposta.Proposta;
 
 import javax.persistence.*;
@@ -48,6 +50,9 @@ public class Cartao {
     @OneToOne @Valid
     private Proposta proposta;
 
+    @OneToMany(mappedBy = "cartao")
+    private Set<Biometria> biometrias = new HashSet<>();
+
     @Deprecated
     public Cartao() {
     }
@@ -77,7 +82,12 @@ public class Cartao {
         return limite;
     }
 
-    public void associaBloqueios(Set<CartaoClient.BloqueiosResponse> response){
-        this.bloqueios = response.stream().map(Bloqueio::new).collect(Collectors.toSet());
+    public Set<Biometria> getBiometrias() {
+        return biometrias;
     }
+
+    //    public void associaBloqueios(Set<CartaoClient.BloqueiosResponse> response){
+//        this.bloqueios = response.stream().map(Bloqueio::new).collect(Collectors.toSet());
+//    }
+
 }

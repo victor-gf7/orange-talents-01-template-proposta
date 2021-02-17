@@ -34,15 +34,36 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_HOST: postgres
 
-  mariadb:
+  propostas:
+    build:
+      dockerfile: ./src/main/java/br/com/zup/proposal/docker/proposal.dockerfile
+      context: .
+    image: ferreirazaltan/proposal
+    container_name: proposal_1
+    ports:
+      - 8080:8080
+    depends_on:
+      - propostadb
+      - analise
+      - contas
+      - transacoes
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      PROPOSAL_DATABASE_URL: jdbc:mariadb://propostadb:3306/proposal-bd
+      PROPOSAL_DATABASE_USERNAME: root
+      ANALISE_HOST: analise:9999
+      CARTAO_HOST: contas:8888
+
+  propostadb:
     image: mariadb
     ports:
-    - 18006:3306
+      - 13306:3306
     environment:
       MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: proposal-bd
       MYSQL_USER: root
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+
 
   keycloak:
     image: jboss/keycloak

@@ -57,7 +57,7 @@ public class PropostaController {
     }
 
     @GetMapping("/propostas/{id}")
-    public ResponseEntity<DetalhesPropostaResponse>  detalharProposta(@PathVariable Long id){
+    public ResponseEntity<DetalhesPropostaResponse> detalharProposta(@PathVariable Long id){
         Optional<Proposta> proposta = propostaRepository.findById(id);
 
         if(proposta.isPresent()){

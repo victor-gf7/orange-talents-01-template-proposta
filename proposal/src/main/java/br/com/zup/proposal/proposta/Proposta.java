@@ -88,6 +88,10 @@ public class Proposta {
         return salario;
     }
 
+    public void setStatus(StatusSolicitacaoCliente status) {
+        this.status = status;
+    }
+
     public StatusSolicitacaoCliente getStatus() {
         return status;
     }

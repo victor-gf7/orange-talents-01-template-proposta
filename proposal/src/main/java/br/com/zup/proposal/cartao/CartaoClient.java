@@ -2,7 +2,6 @@ package br.com.zup.proposal.cartao;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
@@ -11,10 +10,10 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@FeignClient(name = "associaCartao", url = "localhost:8888/api/cartoes")
+@FeignClient(name = "associaCartao", url = "${cartao.host}")
 public interface CartaoClient {
 
-    @GetMapping
+    @GetMapping("/api/cartoes")
     NovoCartaoResponse consulta(@RequestParam("idProposta") Long id);
 
 

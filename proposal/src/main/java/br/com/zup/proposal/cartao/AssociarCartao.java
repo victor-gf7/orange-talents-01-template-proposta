@@ -29,20 +29,17 @@ public class AssociarCartao {
     @Scheduled(fixedDelay = 10000)
     @Transactional
     public void AssociarCartao(){
-
         List<Proposta> propostasElegiveis = propostaRepository
                 .buscaTodasAsPropostasElegiveisSemCartao(StatusSolicitacaoCliente.ELEGIVEL);
 
         for (Proposta proposta: propostasElegiveis){
-
             try {
                 CartaoClient.NovoCartaoResponse response = cartaoClient.consulta(proposta.getId());
-                System.out.println(response.toString());
                 proposta.associaCartao(response);
-                logger.info("Cartão numero={} com limite de ={} associado ao cliente documento={} com sucesso!",
+                logger.info("Cartão numero {} com limite de {} associado ao cliente de documento {} com sucesso!",
                         proposta.getCartao().getNumero(), proposta.getCartao().getLimite(), proposta.getDocumento());
             } catch (FeignException e) {
-                logger.error("Falha ao associar o cartão devidp: " + e.getMessage());
+                logger.error("Falha ao associar o cartão devido: " + e.getMessage());
             }
 
         }
