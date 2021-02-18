@@ -65,7 +65,7 @@ class PropostaControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        assertEquals(StatusSolicitacaoCliente.ELEGIVEL, propostaRepository.findById(1L).get().getStatus());
+        assertEquals(StatusSolicitacaoCliente.ELEGIVEL, propostaRepository.findAll().get(0).getStatus());
     }
 
     @Test
@@ -93,7 +93,7 @@ class PropostaControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        assertEquals(StatusSolicitacaoCliente.NAO_ELEGIVEL, propostaRepository.findById(1L).get().getStatus());
+        assertEquals(StatusSolicitacaoCliente.NAO_ELEGIVEL, propostaRepository.findAll().get(0).getStatus());
 
     }
 

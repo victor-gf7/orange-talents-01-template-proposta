@@ -41,13 +41,15 @@ services:
     image: ferreirazaltan/proposal
     container_name: proposal_1
     ports:
-      - 8080:8080
+      - 8080:8081
     depends_on:
       - propostadb
       - analise
       - contas
       - transacoes
     environment:
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/auth/realms/proposta-cartao
+      KEYCLOAK_JWKS_URI: http://keycloak:8080/auth/realms/proposta-cartao/protocol/openid-connect/certs
       SPRING_PROFILES_ACTIVE: prod
       PROPOSAL_DATABASE_URL: jdbc:mariadb://propostadb:3306/proposal-bd
       PROPOSAL_DATABASE_USERNAME: root
@@ -92,6 +94,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: Pa55w0rd
       POSTGRES_PORT_5432_TCP_ADDR: 127.0.0.1
+      KEYCLOAK_FRONTEND_URL: http://keycloak:8080/auth
 
   analise:
     image: 'zupacademy/analise-financeira'
