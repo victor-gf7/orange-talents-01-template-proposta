@@ -1,9 +1,6 @@
 package br.com.zup.proposal.cartao;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -17,6 +14,9 @@ public class Parcela {
     private Integer quantidade;
 
     private BigDecimal valor;
+
+    @ManyToOne
+    private Cartao cartao;
 
     @Deprecated
     public Parcela() {

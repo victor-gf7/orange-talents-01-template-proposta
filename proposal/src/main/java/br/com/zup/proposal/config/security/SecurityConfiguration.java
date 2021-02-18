@@ -25,7 +25,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.GET, "/actuator/**").hasAuthority("SCOPE_propostas:read")//remover em prod
                         .antMatchers(HttpMethod.POST, "/biometrias/**").hasAuthority("SCOPE_propostas:write")
                         .antMatchers(HttpMethod.POST, "/propostas/**").hasAuthority("SCOPE_propostas:write")
-                        .anyRequest().denyAll()
+                        .anyRequest().permitAll()
         ).csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);

@@ -118,7 +118,6 @@ public class Proposta {
     //necessário refatorar
     public void associaCartao(CartaoClient.NovoCartaoResponse response) {
 
-        Set<Bloqueio> bloqueios = response.getBloqueios().stream().map(Bloqueio::new).collect(Collectors.toSet());
         Set<Aviso> avisos = response.getAvisos().stream().map(Aviso::new).collect(Collectors.toSet());
         Set<Carteira> carteiras = response.getCarteiras().stream().map(Carteira::new).collect(Collectors.toSet());
         Set<Parcela> parcelas = response.getParcelas().stream().map(Parcela::new).collect(Collectors.toSet());
@@ -133,7 +132,7 @@ public class Proposta {
 
 
         this.cartao = new Cartao(response.getId(), response.getTitular(), response.getEmitidoEm(),
-                response.getLimite(), bloqueios, avisos, carteiras,
+                response.getLimite(), null, avisos, carteiras,
                 parcelas, renegociacao, vencimento, this);
     }
 }

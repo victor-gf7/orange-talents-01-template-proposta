@@ -1,7 +1,7 @@
 package br.com.zup.proposal.cartao;
 
 import br.com.zup.proposal.biometria.Biometria;
-import br.com.zup.proposal.biometria.NovaBiometriaRequest;
+import br.com.zup.proposal.bloqueio.Bloqueio;
 import br.com.zup.proposal.proposta.Proposta;
 
 import javax.persistence.*;
@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 public class Cartao {
@@ -29,16 +28,16 @@ public class Cartao {
 
     private BigDecimal limite;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<Bloqueio> bloqueios = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<Aviso> avisos = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<Carteira> carteiras = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<Parcela> parcelas = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.PERSIST)
@@ -86,8 +85,13 @@ public class Cartao {
         return biometrias;
     }
 
-    //    public void associaBloqueios(Set<CartaoClient.BloqueiosResponse> response){
-//        this.bloqueios = response.stream().map(Bloqueio::new).collect(Collectors.toSet());
-//    }
+    public Set<Bloqueio> getBloqueios() {
+        return bloqueios;
+    }
+
+    public void associaBloqueio(String ipOrigem, String userAgent, String sistemaResponsavel, String resultado, boolean ativo) {
+        Bloqueio bloqueio = new Bloqueio(ipOrigem, userAgent, resultado, sistemaResponsavel, ativo, this);
+        this.bloqueios.add(bloqueio);
+    }
 
 }
