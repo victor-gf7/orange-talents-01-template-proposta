@@ -14,7 +14,9 @@ public class Carteira {
 
     private String email;
 
-    private LocalDateTime associadaEm;
+    private LocalDateTime associadaEm = LocalDateTime.now();
+
+    private String resultado;
 
     private String emissor;
 
@@ -25,10 +27,15 @@ public class Carteira {
     public Carteira() {
     }
 
-    public Carteira(CartaoClient.CarteirasResponse response) {
-        this.idAccount = response.getId();
-        this.email = response.getEmail();
-        this.associadaEm = response.getAssociadaEm();
-        this.emissor = response.getEmissor();
+    public Carteira(String idAccount, String email, String resultado, String emissor, Cartao cartao) {
+        this.idAccount = idAccount;
+        this.email = email;
+        this.resultado = resultado;
+        this.emissor = emissor;
+        this.cartao = cartao;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

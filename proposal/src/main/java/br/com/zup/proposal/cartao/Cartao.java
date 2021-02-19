@@ -2,6 +2,8 @@ package br.com.zup.proposal.cartao;
 
 import br.com.zup.proposal.biometria.Biometria;
 import br.com.zup.proposal.bloqueio.Bloqueio;
+import br.com.zup.proposal.carteira.CarteiraClient;
+import br.com.zup.proposal.carteira.NovaCarteiraRequest;
 import br.com.zup.proposal.proposta.Proposta;
 import br.com.zup.proposal.viagem.Viagem;
 
@@ -106,5 +108,10 @@ public class Cartao {
         Aviso aviso = new Aviso(viagem);
         aviso.setResultado(resultado);
         this.avisos.add(aviso);
+    }
+
+    public void associaCarteira(CarteiraClient.CarteiraAssociadaResponse response, NovaCarteiraRequest request) {
+
+        this.carteiras.add(new Carteira(response.getId(), request.getEmail(), response.getResultado(), null, this));
     }
 }
