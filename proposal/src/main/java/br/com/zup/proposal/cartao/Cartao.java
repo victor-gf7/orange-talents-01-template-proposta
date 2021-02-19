@@ -3,6 +3,7 @@ package br.com.zup.proposal.cartao;
 import br.com.zup.proposal.biometria.Biometria;
 import br.com.zup.proposal.bloqueio.Bloqueio;
 import br.com.zup.proposal.proposta.Proposta;
+import br.com.zup.proposal.viagem.Viagem;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -101,4 +102,9 @@ public class Cartao {
         this.bloqueios.add(bloqueio);
     }
 
+    public void associaAviso(Viagem viagem, String resultado) {
+        Aviso aviso = new Aviso(viagem);
+        aviso.setResultado(resultado);
+        this.avisos.add(aviso);
+    }
 }

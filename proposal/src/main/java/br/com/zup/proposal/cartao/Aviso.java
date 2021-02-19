@@ -1,5 +1,7 @@
 package br.com.zup.proposal.cartao;
 
+import br.com.zup.proposal.viagem.Viagem;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -15,6 +17,8 @@ public class Aviso {
 
     private String destino;
 
+    private String resultado;
+
     @ManyToOne
     private Cartao cartao;
 
@@ -22,8 +26,13 @@ public class Aviso {
     public Aviso() {
     }
 
-    public Aviso(CartaoClient.AvisosResponse response) {
-        this.validoAte = response.getValidoAte();
-        this.destino = response.getDestino();
+    public Aviso(Viagem viagem) {
+        this.validoAte = viagem.getDataTerminoViagem();
+        this.destino = viagem.getDestinoViagem();
+        this.cartao = viagem.getCartao();
+    }
+
+    public void setResultado(String resultado) {
+        this.resultado = resultado;
     }
 }

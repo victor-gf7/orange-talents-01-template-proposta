@@ -3,6 +3,7 @@ package br.com.zup.proposal.viagem;
 import br.com.zup.proposal.cartao.Cartao;
 import br.com.zup.proposal.cartao.repository.CartaoRespository;
 import br.com.zup.proposal.util.componets.ClientHostResolver;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,9 @@ public class ViagemController {
     @PersistenceContext
     private EntityManager manager;
 
+    @Autowired
+    private ViagemClient viagemClient;
+
     @PostMapping("/viagem/{numeroCartao}")
     @Transactional
     public ResponseEntity<?> cadastrarAvidoDeViagem(@PathVariable String numeroCartao, @RequestBody @Valid NovaViagemRequest request, HttpServletRequest servletRequest){
@@ -43,6 +47,15 @@ public class ViagemController {
         Viagem viagem = request.converteParaViagem(idOrigem, userAgent, cartao.get());
         manager.persist(viagem);
 
-        return ResponseEntity.ok(viagem.toString());
+        try {
+            ViagemClient.AvisoRequest avisoRequest = new ViagemClient.AvisoRequest(viagem);
+            ViagemClient.NovoAvisoResponse response = viagemClient.avisa(numeroCartao, avisoRequest);
+            cartao.get().associaAviso(viagem, response.getResultado());
+            cartaoRespository.save(cartao.get());
+        } catch (FeignException.UnprocessableEntity e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

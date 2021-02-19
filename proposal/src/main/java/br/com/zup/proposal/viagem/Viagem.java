@@ -46,6 +46,18 @@ public class Viagem {
         this.cartao = cartao;
     }
 
+    public String getDestinoViagem() {
+        return destinoViagem;
+    }
+
+    public LocalDate getDataTerminoViagem() {
+        return dataTerminoViagem;
+    }
+
+    public Cartao getCartao() {
+        return cartao;
+    }
+
     @Override
     public String toString() {
         return "Viagem{" +
