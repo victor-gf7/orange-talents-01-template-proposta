@@ -30,6 +30,10 @@ public class Bloqueio {
     public Bloqueio() {
     }
 
+    public String getSistemaResponsavel() {
+        return sistemaResponsavel;
+    }
+
     public String getResultado() {
         return resultado;
     }

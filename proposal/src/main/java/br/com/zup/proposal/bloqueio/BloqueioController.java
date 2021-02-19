@@ -2,6 +2,7 @@ package br.com.zup.proposal.bloqueio;
 
 import br.com.zup.proposal.cartao.AssociarCartao;
 import br.com.zup.proposal.cartao.Cartao;
+import br.com.zup.proposal.cartao.StatusCartao;
 import br.com.zup.proposal.cartao.repository.CartaoRespository;
 import br.com.zup.proposal.util.componets.ClientHostResolver;
 import feign.FeignException;
@@ -13,7 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Optional;
@@ -23,6 +27,9 @@ public class BloqueioController {
 
     private final Logger logger = LoggerFactory.getLogger(AssociarCartao.class);
 
+    @PersistenceContext
+    private EntityManager manager;
+
     @Autowired
     private CartaoRespository cartaoRespository;
 
@@ -30,9 +37,14 @@ public class BloqueioController {
     private BloqueiaClient bloqueiaClient;
 
     @PostMapping("/bloqueios/{numeroCartao}")
+    @Transactional
     public ResponseEntity<?> bloqueiaCartao(@PathVariable @NotNull String numeroCartao, HttpServletRequest servletRequest){
 
         Optional<Cartao> cartao = cartaoRespository.findByNumero(numeroCartao);
+        ClientHostResolver resolver = new ClientHostResolver(servletRequest);
+        String userAgent = servletRequest.getHeader("User-Agent");
+        String idOrigem = resolver.resolve();
+
 
         if(cartao.isPresent()){
             for (Bloqueio bloqueio: cartao.get().getBloqueios())
@@ -45,26 +57,24 @@ public class BloqueioController {
             return ResponseEntity.notFound().build();
         }
 
+
+        cartao.get().associaBloqueio(idOrigem,userAgent, "MyAPI", "BLOQUEADO", true);
+        cartaoRespository.save(cartao.get());
+        logger.info("O cartão {} foi BLOQUEADO pelo sistema MyAPI", cartao.get().getNumero());
+
         BloqueiaClient.NovoBloqueioResponse response;
         BloqueiaClient.NovoBloqueioRequest request;
 
         try {
             request = new BloqueiaClient.NovoBloqueioRequest("MyAPI");
             response = bloqueiaClient.bloqueia(numeroCartao, request);
-            logger.info("O cartao {} foi {} pelo sistema {}", numeroCartao, response.getResultado(), request.getSistemaResponsavel());
+            cartao.get().setStatusCartao(StatusCartao.BLOQUEADO);
+            logger.info("O cartao {} foi {} pelo sistema {} no sistema legado", numeroCartao, response.getResultado(), request.getSistemaResponsavel());
 
         } catch (FeignException.UnprocessableEntity e) {
             logger.error("Erro ao Bloquear cartão devido: " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
-
-
-        ClientHostResolver resolver = new ClientHostResolver(servletRequest);
-
-        cartao.get().associaBloqueio(resolver.resolve(), servletRequest.getHeader("User-Agent"),
-                request.getSistemaResponsavel(), response.getResultado(), true);
-
-        cartaoRespository.save(cartao.get());
 
         return ResponseEntity.ok().build();
     }

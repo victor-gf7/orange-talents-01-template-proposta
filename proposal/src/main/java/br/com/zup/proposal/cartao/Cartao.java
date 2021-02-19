@@ -28,6 +28,9 @@ public class Cartao {
 
     private BigDecimal limite;
 
+    @Enumerated(EnumType.STRING)
+    private StatusCartao statusCartao = StatusCartao.ATIVO;
+
     @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<Bloqueio> bloqueios = new HashSet<>();
 
@@ -71,6 +74,10 @@ public class Cartao {
         this.renegociacao = renegociacao;
         this.vencimento = vencimento;
         this.proposta = proposta;
+    }
+
+    public void setStatusCartao(StatusCartao statusCartao) {
+        this.statusCartao = statusCartao;
     }
 
     public String getNumero() {
