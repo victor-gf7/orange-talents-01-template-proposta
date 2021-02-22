@@ -47,6 +47,9 @@ services:
       - analise
       - contas
       - transacoes
+      - keycloak
+      - jaeger
+      - prometheus
     environment:
       KEYCLOAK_ISSUER_URI: http://keycloak:8080/auth/realms/proposta-cartao
       KEYCLOAK_JWKS_URI: http://keycloak:8080/auth/realms/proposta-cartao/protocol/openid-connect/certs
@@ -55,6 +58,9 @@ services:
       PROPOSAL_DATABASE_USERNAME: root
       ANALISE_HOST: analise:9999
       CARTAO_HOST: contas:8888
+      JAEGER_ENABLED: "true"
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_SAMPLER: 1
 
   propostadb:
     image: mariadb
@@ -94,7 +100,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: Pa55w0rd
       POSTGRES_PORT_5432_TCP_ADDR: 127.0.0.1
-      #KEYCLOAK_FRONTEND_URL: http://keycloak:8080/auth
+      KEYCLOAK_FRONTEND_URL: http://keycloak:8080/auth
 
   analise:
     image: 'zupacademy/analise-financeira'
@@ -144,8 +150,8 @@ services:
   prometheus:
     image: prom/prometheus
     volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-volume:/etc/prometheus/
-    network_mode: bridge
     ports:
       - "9090:9090"
 
@@ -153,7 +159,6 @@ services:
     image: grafana/grafana
     volumes:
       - grafana-volume:/var/lib/grafana
-    network_mode: bridge
     ports:
       - "3000:3000"
     depends_on:
