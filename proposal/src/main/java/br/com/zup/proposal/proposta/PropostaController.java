@@ -8,15 +8,21 @@ import br.com.zup.proposal.proposta.response.DetalhesPropostaResponse;
 import feign.FeignException;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @RestController
@@ -42,7 +48,7 @@ public class PropostaController {
 
         Span spanAtivo = tracer.activeSpan();
 
-        if(propostaRepository.existsByDocumento(request.getDocumento())){
+        if(propostaRepository.existsByDocumento(DigestUtils.sha256Hex(request.getDocumento()))){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
 
@@ -62,6 +68,9 @@ public class PropostaController {
         } catch (FeignException.UnprocessableEntity ex){
             proposta.atualizaStatus("COM_RESTRICAO");
         }
+
+        proposta.setDocumento(DigestUtils.sha256Hex(proposta.getDocumento()));
+
         propostaRepository.save(proposta);
 
         URI url = builder.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri();
@@ -86,4 +95,7 @@ public class PropostaController {
 
         return  ResponseEntity.notFound().build();
     }
+
 }
+
+

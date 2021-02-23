@@ -22,7 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests(authorizeRequests ->
                 authorizeRequests
                         .antMatchers(HttpMethod.GET, "/propostas/**").hasAuthority("SCOPE_propostas:read")
-                        .antMatchers(HttpMethod.GET, "/actuator/**").hasAuthority("SCOPE_propostas:read")
+                        .antMatchers(HttpMethod.GET, "/actuator/**").permitAll()//tirar em prod
                         .antMatchers(HttpMethod.POST, "/biometrias/**").hasAuthority("SCOPE_propostas:write")
                         .antMatchers(HttpMethod.POST, "/propostas/**").hasAuthority("SCOPE_propostas:write")
                         .antMatchers(HttpMethod.POST, "/bloqueios/**").hasAuthority("SCOPE_propostas:write")

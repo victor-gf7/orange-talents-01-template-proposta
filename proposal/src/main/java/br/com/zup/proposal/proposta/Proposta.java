@@ -20,7 +20,7 @@ public class Proposta {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CPFOuCNPJ @NotBlank
+    @NotBlank
     @Column(nullable = false)
     private String documento;
 
@@ -90,6 +90,10 @@ public class Proposta {
 
     public void setStatus(StatusSolicitacaoCliente status) {
         this.status = status;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 
     public StatusSolicitacaoCliente getStatus() {
