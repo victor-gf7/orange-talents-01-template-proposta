@@ -36,6 +36,10 @@ public interface BloqueiaClient {
             return resultado;
         }
 
+        public void setResultado(String resultado) {
+            this.resultado = resultado;
+        }
+
         @Override
         public String toString() {
             return "NovoBloqueioResponse{" +

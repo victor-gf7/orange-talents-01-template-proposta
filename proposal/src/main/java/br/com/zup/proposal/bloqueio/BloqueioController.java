@@ -25,7 +25,7 @@ import java.util.Optional;
 @RestController
 public class BloqueioController {
 
-    private final Logger logger = LoggerFactory.getLogger(AssociarCartao.class);
+    private final Logger logger = LoggerFactory.getLogger(BloqueioController.class);
 
     @PersistenceContext
     private EntityManager manager;
@@ -67,9 +67,8 @@ public class BloqueioController {
 
         try {
             request = new BloqueiaClient.NovoBloqueioRequest("MyAPI");
-            response = bloqueiaClient.bloqueia(numeroCartao, request);
+            bloqueiaClient.bloqueia(numeroCartao, request);
             cartao.get().setStatusCartao(StatusCartao.BLOQUEADO);
-            logger.info("O cartao {} foi {} pelo sistema {} no sistema legado", numeroCartao, response.getResultado(), request.getSistemaResponsavel());
 
         } catch (FeignException.UnprocessableEntity e) {
             logger.error("Erro ao Bloquear cartão devido: " + e.getMessage());

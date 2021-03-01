@@ -4,18 +4,26 @@ import br.com.zup.proposal.proposta.repository.PropostaRepository;
 import br.com.zup.proposal.proposta.request.NovaPropostaRequest;
 import br.com.zup.proposal.util.builder.EnderecoBuilder;
 import br.com.zup.proposal.util.builder.PropostaBuilder;
+import br.com.zup.proposal.util.builder.TesteDataBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.opentracing.Tracer;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,22 +34,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Transactional
 class PropostaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private PropostaRepository propostaRepository;
+    @MockBean
+    private Tracer tracer;
 
     @Test
     void deveriaCriarPropostaElegivel() throws Exception {
+        Mockito.when(tracer.activeSpan()).thenReturn(TesteDataBuilder.getSpan());
         NovaPropostaRequest request = new PropostaBuilder()
                 .comDocumento("137.881.460-60")
                 .comEmail("user@email.com")
@@ -70,6 +79,7 @@ class PropostaControllerTest {
 
     @Test
     void deveriaCriarPropostaNaoElegivel() throws Exception {
+        Mockito.when(tracer.activeSpan()).thenReturn(TesteDataBuilder.getSpan());
         NovaPropostaRequest request = new PropostaBuilder()
                 .comDocumento("304.728.780-50")
                 .comEmail("user@email.com")
@@ -99,6 +109,7 @@ class PropostaControllerTest {
 
     @Test
     void naoDeveriaCriarOutraPropostaParaOMesmoDocumento() throws Exception {
+        Mockito.when(tracer.activeSpan()).thenReturn(TesteDataBuilder.getSpan());
         NovaPropostaRequest request = new PropostaBuilder()
                 .comDocumento("137.881.460-60")
                 .comEmail("user@email.com")
@@ -244,7 +255,7 @@ class PropostaControllerTest {
 
     @Test
     void deveriaDetalharUmaPropostaExistente() throws Exception {
-
+        Mockito.when(tracer.activeSpan()).thenReturn(TesteDataBuilder.getSpan());
         NovaPropostaRequest request = new PropostaBuilder()
                 .comDocumento("137.881.460-60")
                 .comEmail("user@email.com")
