@@ -35,10 +35,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -96,4 +96,50 @@ class BloqueioControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void naoDeveriaBloquearUmCartaoInexistente() throws Exception {
+        mockMvc.perform(
+                post("/bloqueios/{numeroCartao}", "2222-2222-2222-2222")
+        )
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void naoDeveriaBloquearUmCartaoJaBloqueado() throws Exception {
+
+        NovaPropostaRequest request = new PropostaBuilder()
+                .comDocumento("137.881.460-60")
+                .comEmail("user@email.com")
+                .comNome("Usuario Teste")
+                .comSalario(new BigDecimal(2500.0))
+                .comEndereco(new EnderecoBuilder()
+                        .comRua("Rua 1")
+                        .comNumero(222)
+                        .comBairro("Bairro novo")
+                        .comCidade("Salvador")
+                        .comEstado("Bahia")
+                        .comCep("41.222-000")
+                        .comComplemento("Ap 0001")
+                        .ciar()).cria();
+        Proposta proposta = request.converteParaProposta();
+        proposta.setStatus(StatusSolicitacaoCliente.ELEGIVEL);
+        entityManager.persist(proposta);
+
+        Set<Bloqueio> bloqueios  = new HashSet<>();
+        Cartao cartao = new Cartao("1111-1111-1111-1111", "Usuario Teste", LocalDateTime.now(), new BigDecimal("2000.0"),
+                bloqueios , null, null, null, null, null, proposta);
+        entityManager.persist(cartao);
+
+        cartao.associaBloqueio("179.666.4.254", "APITester", "APITester", "BLOQUEADO", true);
+
+        mockMvc.perform(
+                post("/bloqueios/{numeroCartao}", cartao.getNumero())
+        )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.Bloqueio").value("Este Cartão já se encontra bloqueado"));
+    }
+
 }

@@ -50,7 +50,7 @@ public class BloqueioController {
             for (Bloqueio bloqueio: cartao.get().getBloqueios())
                 if (bloqueio.isAtivo() && bloqueio.getResultado().equals("BLOQUEADO")){
                     HashMap<String, Object> responseMap = new HashMap<>();
-                    responseMap.put("Bloqueio", "Esta Cratão já se encontra bloqueado");
+                    responseMap.put("Bloqueio", "Este Cartão já se encontra bloqueado");
                     return ResponseEntity.unprocessableEntity().body(responseMap);
                 }
         } else{
@@ -58,7 +58,7 @@ public class BloqueioController {
         }
 
 
-        cartao.get().associaBloqueio(idOrigem,userAgent, "MyAPI", "BLOQUEADO", true);
+        cartao.get().associaBloqueio(idOrigem, userAgent, "MyAPI", "BLOQUEADO", true);
         cartaoRespository.save(cartao.get());
         logger.info("O cartão {} foi BLOQUEADO pelo sistema MyAPI", cartao.get().getNumero());
 
